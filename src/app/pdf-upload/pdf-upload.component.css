@@ -1,0 +1,18 @@
+.container {
+  text-align: center;
+}
+
+.drop-area {
+  background: #fafafa;
+  border: 2px dashed #eee;
+  border-radius: 15px;
+  height: 100px;
+}
+
+.dragover {
+  background: #eee;
+}
+
+.submit-button {
+  margin-top: 20px;
+}

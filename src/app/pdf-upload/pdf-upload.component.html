@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="drop-area"
+       [class.dragover]="dragEnterCount === 1"
+       (drop)="drop($event)"
+       (dragenter)="dragenter()"
+       (dragover)="dragover($event)"
+       (dragleave)="dragleave()"
+       fxLayout='column'
+       fxLayoutAlign="center space-around">
+    <span>Drag PDF files here</span>
+  </div>
+  <button class="submit-button" md-raised-button (click)="files.click()">Aggregate in one CSV</button>
+  <input type="file" id="files" name="files[]" multiple [hidden]="true"
+         (change)="selectFiles($event)" #files/>
+  <ul>
+    <li *ngFor="let error of errors">{{error}}</li>
+  </ul>
+  <ul>
+    <li *ngFor="let result of results">{{result}}</li>
+  </ul>
+</div>
