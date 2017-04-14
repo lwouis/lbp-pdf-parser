@@ -9,7 +9,7 @@
        fxLayoutAlign="center space-around">
     <span>Drag PDF files here</span>
   </div>
-  <button class="submit-button" md-raised-button (click)="files.click()">Aggregate in one CSV</button>
+  <button class="submit-button" md-raised-button (click)="files.click()">Combine into one CSV</button>
   <input type="file" id="files" name="files[]" multiple [hidden]="true"
          (change)="selectFiles($event)" #files/>
   <ul>
