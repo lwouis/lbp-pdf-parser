@@ -12,18 +12,13 @@ table {
   overflow: auto;
 }
 
-.drop-area {
-  background: #fafafa;
-  border: 2px dashed #eee;
-  border-radius: 15px;
+.selected-files {
+  resize: horizontal;
+  overflow: auto;
 }
 
-.dragover {
-  background: #eee;
-}
-
-.controls {
-  margin-bottom: 20px;
+.errors {
+  color: #701316
 }
 
 table {

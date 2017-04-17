@@ -16,7 +16,6 @@ export class PdfUploadComponent implements OnInit {
   private readonly dateRegex = /^([0-9]{2}\/[0-9]{2})(.+?)([0-9]+,[0-9]{2})/
   private readonly blacklist = /^(?:date| touche)/
   private readonly yearLineRegex = /[Aa]ncien solde au.+?([0-9]{4})/
-  private dragEnterCount = 0
   private selectedFiles: File[] = []
   private operations: Operation[] = []
   private errors: string[] = []
@@ -26,25 +25,6 @@ export class PdfUploadComponent implements OnInit {
   }
 
   ngOnInit() {
-  }
-
-  dragenter() {
-    this.dragEnterCount++
-  }
-
-  dragover(event: DragEvent) {
-    event.preventDefault()
-    event.dataTransfer.dropEffect = 'move'
-  }
-
-  dragleave() {
-    this.dragEnterCount--
-  }
-
-  async selectFilesBydropping(event: DragEvent): Promise<void> {
-    event.preventDefault()
-    this.dragEnterCount--
-    await this.selectFiles(event.dataTransfer.files)
   }
 
   async selectFilesWithInput(event: Event | any): Promise<void> {
@@ -138,6 +118,7 @@ export class PdfUploadComponent implements OnInit {
   clear(): void {
     this.selectedFiles.length = 0
     this.operations.length = 0
+    this.errors.length = 0
   }
 
   private operationsFromLines(lines: List<string>, year: string): Operation[] {
