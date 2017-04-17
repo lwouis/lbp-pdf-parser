@@ -1,29 +1,43 @@
-md-card {
-  text-align: center;
+.container {
+  height: 100%;
+  overflow: auto;
+}
+
+section {
+  padding: 10px;
+}
+
+table {
+  display: block;
+  overflow: auto;
 }
 
 .drop-area {
   background: #fafafa;
   border: 2px dashed #eee;
   border-radius: 15px;
-  height: 100px;
 }
 
 .dragover {
   background: #eee;
 }
 
-.submit-button {
-  margin-top: 20px;
-}
-
-.results {
-  text-align: left;
+.controls {
+  margin-bottom: 20px;
 }
 
 table {
   border-spacing: 10px;
   border-collapse: separate;
+}
+
+.operations td:nth-of-type(2) {
+  text-align: right;
+}
+
+tbody {
+  overflow: auto;
+  vertical-align: baseline;
 }
 
 thead, tbody {

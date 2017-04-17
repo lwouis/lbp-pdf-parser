@@ -17,8 +17,9 @@ export class PdfUploadComponent implements OnInit {
   private readonly blacklist = /^(?:date| touche)/
   private readonly yearLineRegex = /[Aa]ncien solde au.+?([0-9]{4})/
   private dragEnterCount = 0
-  private operations = []
-  private errors = []
+  private selectedFiles: File[] = []
+  private operations: Operation[] = []
+  private errors: string[] = []
   private progress = 0
 
   constructor() {
@@ -40,51 +41,69 @@ export class PdfUploadComponent implements OnInit {
     this.dragEnterCount--
   }
 
-  async drop(event: DragEvent): Promise<void> {
+  async selectFilesBydropping(event: DragEvent): Promise<void> {
     event.preventDefault()
     this.dragEnterCount--
-    await this.handleFileSelect(event.dataTransfer.files)
+    await this.selectFiles(event.dataTransfer.files)
   }
 
-  async selectFiles(event: Event | any): Promise<void> {
-    await this.handleFileSelect(event.target.files)
+  async selectFilesWithInput(event: Event | any): Promise<void> {
+    await this.selectFiles(event.target.files as FileList)
   }
 
-  private async handleFileSelect(files: FileList): Promise<void> {
-    this.reset()
-    const operations: Operation[][] = await Promise.all(Array.from(files).map(async (file, i, array) => {
+  private async selectFiles(files: FileList): Promise<void> {
+    this.selectedFiles = Array.from(files)
+    await this.parseFiles()
+  }
+
+  async parseFiles(): Promise<void> {
+    this.progress = 0.1 // force progress to start to update the UI asap
+    const operations = []
+    const errors = []
+    await Promise.all(Array.from(this.selectedFiles).map(async (file) => {
       try {
-        const fileOperations = await this.parse(file)
-        this.progress += 1 / array.length * 100
-        return fileOperations
+        const fileOperations = await this.parseFile(file, this.selectedFiles.length)
+        operations.push(...fileOperations)
       } catch (error) {
-        this.errors.push('Failed parsing file: \'' + file.name + '\'')
         console.error(error)
+        errors.push(error)
       }
     }))
-    this.operations = Array.prototype.concat(...operations)
-
+    this.progress = 0
+    this.operations = operations
+    this.errors = errors
   }
 
-  private async parse(file: File): Promise<Operation[]> {
+  private async parseFile(file: File, nFiles: number) {
+    try {
+      return await this.operationsFromFile(file)
+    } catch (error) {
+      throw new Error('Failed parsing file: \'' + file.name + '\'')
+    } finally {
+      this.progress += 1 / nFiles * 100
+    }
+  }
+
+  private async operationsFromFile(file: File): Promise<Operation[]> {
     this.configPdfjs()
     const fileContents: ArrayBuffer = await PromiseHelper.fileReaderP(file)
     const pdfDocument: PDFDocumentProxy = await PDFJS.getDocument(new Uint8Array(fileContents))
-    const lines = await this.aggregatePdfDocumentLines(pdfDocument)
+    const lines = await this.linesFromDocument(pdfDocument)
     const yearLine = lines.find(line => line.text.match(this.yearLineRegex) !== null)
     const year = yearLine.text.match(this.yearLineRegex)[1]
     const operationLines = lines
       .filter(line => this.looksLikeOperationLine(line.text, line.x))
       .map(line => line.text) as List<string>
-    return this.parseOperations(operationLines, year)
+    return this.operationsFromLines(operationLines, year)
   }
 
   private configPdfjs() {
     PDFJS.workerSrc = 'node_modules/pdfjs-dist/build/pdf.worker.js'
+    // true means no web worker is used, and everything is done on the UI thread
     // PDFJS.disableWorker = true
   }
 
-  private async aggregatePdfDocumentLines(pdfDocument: PDFDocumentProxy): Promise<List<Line>> {
+  private async linesFromDocument(pdfDocument: PDFDocumentProxy): Promise<List<Line>> {
     let lines = List<Line>()
     for (let i = 1; i <= pdfDocument.numPages; i++) {
       const page = await pdfDocument.getPage(i)
@@ -104,7 +123,6 @@ export class PdfUploadComponent implements OnInit {
   private consolidateLinesByY(linesByY: Map<number, Line>, item): Map<number, Line> {
     const line = {text: item.str, x: item.transform[4], y: item.transform[5]}
     const lineAtY = linesByY.get(line.y)
-
     if (lineAtY === undefined) {
       return linesByY.set(line.y, {text: line.text, x: line.x, y: line.y})
     } else {
@@ -117,13 +135,12 @@ export class PdfUploadComponent implements OnInit {
       || (this.operationXPositions2.includes(lineX) && !lineText.match(this.blacklist))
   }
 
-  private reset(): void {
+  clear(): void {
+    this.selectedFiles.length = 0
     this.operations.length = 0
-    this.errors.length = 0
-    this.progress = 0
   }
 
-  private parseOperations(lines: List<string>, year: string): Operation[] {
+  private operationsFromLines(lines: List<string>, year: string): Operation[] {
     return lines.reduce((operations, line) => {
       const matches = line.match(this.dateRegex)
       if (matches) {

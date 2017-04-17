@@ -1,44 +1,100 @@
-<md-card>
-  <md-card-title>
-    Upload PDF
-  </md-card-title>
-  <md-card-content>
-    <div class="drop-area"
+<div class="container"
+     fxLayout='row'
+     fxLayoutAlign="stretch">
+  <section fxFlex="0 1 200px"
+           fxLayout='column'
+           fxLayoutAlign="stretch"
+           [style.background]="'lightblue'">
+    <div fxFlex="0 0 auto"
+         class="controls">
+      <button md-raised-button
+              [disabled]="progress > 0 || selectedFiles.length > 0"
+              (click)="files.click()">
+        Select PDF files
+      </button>
+      <input type="file"
+             id="files"
+             name="files[]"
+             multiple
+             [hidden]="true"
+             (change)="selectFilesWithInput($event)"
+             #files/>
+    </div>
+    <div fxFlex="0 1 100px"
+         class="drop-area"
          [class.dragover]="dragEnterCount === 1"
-         (drop)="drop($event)"
+         (drop)="selectFilesBydropping($event)"
          (dragenter)="dragenter()"
          (dragover)="dragover($event)"
          (dragleave)="dragleave()"
          fxLayout='column'
-         fxLayoutAlign="center space-around">
+         fxLayoutAlign="center center">
       <span>Drag PDF files here</span>
     </div>
-    <button class="submit-button" md-raised-button (click)="files.click()">Combine into one CSV</button>
-    <input type="file" id="files" name="files[]" multiple [hidden]="true"
-           (change)="selectFiles($event)" #files/>
+  </section>
 
-    <md-progress-bar [value]="progress"></md-progress-bar>
-
-    <div class="results">
-      <ul>
-        <li *ngFor="let error of errors">{{error}}</li>
-      </ul>
-      <table *ngIf="operations.length > 0">
-        <thead>
-        <tr>
-          <td>Date</td>
-          <td>Amount</td>
-          <td>Description</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let operation of operations">
-          <td>{{operation.date}}</td>
-          <td>{{operation.amount}}</td>
-          <td>{{operation.description}}</td>
-        </tr>
-        </tbody>
-      </table>
+  <section fxFlex="0 1 auto"
+           fxLayout='column'
+           fxLayoutAlign="stretch"
+           class="selected-files"
+           [style.background]="'lightyellow'">
+    <div fxFlex="0 0 auto"
+         class="controls"
+         fxLayout='row'
+         fxLayoutAlign="stretch">
     </div>
-  </md-card-content>
-</md-card>
+    <table fxFlex="0 1 auto"
+           *ngIf="selectedFiles.length > 0">
+      <tr *ngFor="let selectedFile of selectedFiles">
+        <td>{{selectedFile.name}}</td>
+      </tr>
+    </table>
+  </section>
+
+  <section fxFlex="0 1 auto"
+           fxLayout='column'
+           fxLayoutAlign="stretch"
+           [style.background]="'lightgreen'">
+    <div fxFlex="0 0 auto"
+         class="controls"
+         fxLayout='row'
+         fxLayoutAlign="stretch">
+      <button md-raised-button
+              [disabled]="progress > 0 || operations.length === 0"
+              (click)="parseFiles()">
+        Save in CSV file
+      </button>
+      <button md-raised-button
+              [disabled]="progress > 0 || selectedFiles.length === 0"
+              (click)="clear()">
+        Clear
+      </button>
+    </div>
+    <md-progress-spinner fxFlex="0 0 200px"
+                         [value]="progress"
+                         *ngIf="progress > 0 && progress < 100">
+    </md-progress-spinner>
+    <ul fxFlex="0 1 auto"
+        *ngIf="errors.length > 0">
+      <li *ngFor="let error of errors">{{error}}</li>
+    </ul>
+    <table fxFlex="0 1 auto"
+           class="operations"
+           *ngIf="operations.length > 0">
+      <thead>
+      <tr>
+        <td>Date</td>
+        <td>Amount</td>
+        <td>Description</td>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let operation of operations">
+        <td>{{operation.date}}</td>
+        <td>{{operation.amount}}</td>
+        <td>{{operation.description}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
