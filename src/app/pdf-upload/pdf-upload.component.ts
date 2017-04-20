@@ -1,6 +1,4 @@
-import {Component, OnInit} from '@angular/core'
-import {PDFDocumentProxy, PDFJS} from 'pdfjs-dist'
-import {Operation} from '../../models/operation'
+import {Component} from '@angular/core'
 import {PdfParser} from '../../models/pdf-parser'
 
 @Component({
@@ -9,9 +7,9 @@ import {PdfParser} from '../../models/pdf-parser'
   styleUrls: ['./pdf-upload.component.css'],
 })
 export class PdfUploadComponent {
-  private selectedFiles: File[] = []
-  private operations: Operation[] = []
-  private errors: Error[] = []
+  private selectedFiles = []
+  private operations = []
+  private errors = []
   private progress = 0
 
   async selectFilesWithInput(event: Event | any): Promise<void> {
@@ -24,7 +22,9 @@ export class PdfUploadComponent {
   }
 
   async parseFiles(): Promise<void> {
-    [this.operations, this.errors] = await new PdfParser().parseFiles(this.selectedFiles, (progress) => this.progress = progress)
+    const result = await new PdfParser().parseFiles(this.selectedFiles, (progress) => this.progress = progress)
+    this.operations = result.operations
+    this.errors = result.errors
   }
 
   clear(): void {

@@ -34,8 +34,8 @@
   </section>
 
   <div fxFlex="0 1 auto"
-           fxLayout='row'
-           fxLayoutAlign="stretch">
+       fxLayout='row'
+       fxLayoutAlign="stretch">
     <section fxFlex="0 1 auto"
              fxLayout='column'
              fxLayoutAlign="stretch"
@@ -77,7 +77,7 @@
         <tbody>
         <tr *ngFor="let operation of operations">
           <td>{{operation.date}}</td>
-          <td>{{operation.amount}}</td>
+          <td>{{operation.amount | number:'1.2-2'}}</td>
           <td>{{operation.description}}</td>
         </tr>
         </tbody>
