@@ -1,33 +1,55 @@
 .container {
   height: 100%;
   overflow: auto;
+  padding: 20px;
+  background: #f9f9f9;
 }
 
-section {
-  padding: 10px;
+.menu {
+  margin-bottom: 20px;
 }
 
-table {
-  display: block;
-  overflow: auto;
+md-card {
+  font: inherit;
 }
 
-.selected-files {
+.controls > * {
+  margin-right: 15px;
+}
+
+.files {
+  margin-right: 20px;
   resize: horizontal;
   overflow: auto;
+  background: #d0e6f5;
+}
+
+.operations {
+  background: #d4fad4;
 }
 
 .errors {
   color: #701316
 }
 
-table {
-  border-spacing: 10px;
-  border-collapse: separate;
-}
-
 .operations td:nth-of-type(2) {
   text-align: right;
+}
+
+md-progress-spinner {
+  width: 36px;
+  height: 36px;
+}
+
+table {
+  display: block;
+  border-spacing: 10px;
+  border-collapse: separate;
+  overflow: auto;
+}
+
+thead {
+  font-weight: bold;
 }
 
 tbody {
@@ -37,4 +59,9 @@ tbody {
 
 thead, tbody {
   vertical-align: top;
+}
+
+pre, p {
+  font: inherit !important;
+  margin: 0;
 }

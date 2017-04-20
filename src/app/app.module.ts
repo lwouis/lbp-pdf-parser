@@ -5,7 +5,7 @@ import {HttpModule} from '@angular/http'
 import {AppComponent} from './app.component'
 import {PdfUploadComponent} from './pdf-upload/pdf-upload.component'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
-import {MdButtonModule, MdProgressSpinnerModule} from '@angular/material'
+import {MdButtonModule, MdCardModule, MdProgressSpinnerModule} from '@angular/material'
 import {FlexLayoutModule} from '@angular/flex-layout'
 
 @NgModule({
@@ -20,6 +20,7 @@ import {FlexLayoutModule} from '@angular/flex-layout'
     BrowserAnimationsModule,
     MdButtonModule,
     MdProgressSpinnerModule,
+    MdCardModule,
     FlexLayoutModule,
   ],
   providers: [],

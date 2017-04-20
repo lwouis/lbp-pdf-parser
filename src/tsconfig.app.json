@@ -5,7 +5,8 @@
     "module": "es2015",
     "baseUrl": "",
     "types": [
-      "pdf"
+      "pdf",
+      "file-saver"
     ]
   },
   "exclude": [

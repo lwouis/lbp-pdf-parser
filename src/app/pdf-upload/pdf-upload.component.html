@@ -4,84 +4,83 @@
 
   <section fxFlex="0 0 auto"
            fxLayout='column'
-           fxLayoutAlign="stretch"
-           [style.background]="'lightblue'">
+           class="menu"
+           fxLayoutAlign="stretch">
+    <h1 fxFlex="0 0 auto">Convert many PDF to one CSV</h1>
     <div fxFlex="0 0 auto"
          class="controls">
       <button md-raised-button
-              [disabled]="progress > 0 || selectedFiles.length > 0"
-              (click)="files.click()">
+              [disabled]="progress > 0"
+              (click)="fileInput.click()">
         Select PDF files
       </button>
       <input type="file"
-             id="files"
-             name="files[]"
              multiple
              [hidden]="true"
              (change)="selectFilesWithInput($event)"
-             #files/>
+             #fileInput/>
       <button md-raised-button
               [disabled]="progress > 0 || operations.length === 0"
-              (click)="parseFiles()">
+              (click)="downloadCsv()">
         Save in CSV file
       </button>
-      <button md-raised-button
-              [disabled]="progress > 0 || selectedFiles.length === 0"
-              (click)="clear()">
-        Clear
-      </button>
+      <md-progress-spinner fxFlex="0 0 auto"
+                           [value]="progress">
+      </md-progress-spinner>
     </div>
   </section>
 
   <div fxFlex="0 1 auto"
        fxLayout='row'
        fxLayoutAlign="stretch">
-    <section fxFlex="0 1 auto"
+    <md-card fxFlex="1 1 auto"
              fxLayout='column'
              fxLayoutAlign="stretch"
-             class="selected-files"
-             [style.background]="'lightyellow'">
-      <h2>Files</h2>
-      <table fxFlex="0 1 auto"
+             class="files"
              *ngIf="selectedFiles.length > 0">
+      <h2>Files</h2>
+      <table fxFlex="0 1 auto">
         <tr *ngFor="let selectedFile of selectedFiles">
           <td>{{selectedFile.name}}</td>
         </tr>
       </table>
-    </section>
+    </md-card>
 
-    <section fxFlex="0 1 auto"
+    <md-card fxFlex="1 1 auto"
              fxLayout='column'
              fxLayoutAlign="stretch"
-             [style.background]="'lightgreen'">
+             *ngIf="operations.length > 0 || progress > 0"
+             [ngSwitch]="progress > 0 && progress < 100"
+             class="operations">
       <h2>Operations</h2>
-      <md-progress-spinner fxFlex="0 0 200px"
-                           [value]="progress"
-                           *ngIf="progress > 0 && progress < 100">
-      </md-progress-spinner>
-      <ul fxFlex="0 1 auto"
-          class="errors"
-          *ngIf="errors.length > 0">
-        <li *ngFor="let error of errors">{{error}}</li>
-      </ul>
-      <table fxFlex="0 1 auto"
-             class="operations"
-             *ngIf="operations.length > 0">
-        <thead>
-        <tr>
-          <td>Date</td>
-          <td>Amount</td>
-          <td>Description</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let operation of operations">
-          <td>{{operation.date}}</td>
-          <td>{{operation.amount | number:'1.2-2'}}</td>
-          <td>{{operation.description}}</td>
-        </tr>
-        </tbody>
-      </table>
-    </section>
+      <p *ngSwitchCase="true">Loading…</p>
+      <div *ngSwitchCase="false"
+           fxLayout='column'>
+        <ul fxFlex="0 1 auto"
+            class="errors"
+            *ngIf="errors.length > 0">
+          <li *ngFor="let error of errors">{{error}}</li>
+        </ul>
+        <table fxFlex="0 1 auto"
+               class="operations">
+          <thead>
+          <tr>
+            <td>Date</td>
+            <td>Amount</td>
+            <td>Description</td>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let operation of operations">
+            <td>{{operation.date}}</td>
+            <td>{{operation.amount | number:'1.2-2'}}</td>
+            <td>
+              <pre>{{operation.description}}</pre>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </md-card>
   </div>
 </div>
