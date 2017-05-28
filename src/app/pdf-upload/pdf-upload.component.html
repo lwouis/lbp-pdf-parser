@@ -11,24 +11,39 @@
          class="controls">
       <button md-raised-button
               [disabled]="progress > 0"
-              (click)="fileInput.click()">
-        Select PDF files
+              (click)="csvFilesInput.click()">
+        Import CSV files
       </button>
       <input type="file"
              multiple
              [hidden]="true"
-             (change)="selectFilesWithInput($event)"
-             #fileInput/>
+             (change)="importCsvFilesFromEvent($event)"
+             #csvFilesInput/>
+      <button md-raised-button
+              [disabled]="progress > 0"
+              (click)="pdfFilesInput.click()">
+        Import PDF files
+      </button>
+      <input type="file"
+             multiple
+             [hidden]="true"
+             (change)="importPdfFilesFromEvent($event)"
+             #pdfFilesInput/>
       <button md-raised-button
               [disabled]="progress > 0 || operations.length === 0"
-              (click)="downloadCsv()">
-        Save in CSV file
+              (click)="exportToCsvFile()">
+        Export CSV file
       </button>
       <md-progress-spinner fxFlex="0 0 auto"
                            [value]="progress">
       </md-progress-spinner>
     </div>
   </section>
+
+  <div fxFlex="0 0 auto"
+       [hidden]="operations.length === 0"
+       #chart>
+  </div>
 
   <div fxFlex="0 1 auto"
        fxLayout='row'
@@ -49,7 +64,7 @@
     <md-card fxFlex="1 1 auto"
              fxLayout='column'
              fxLayoutAlign="stretch"
-             *ngIf="operations.length > 0 || progress > 0"
+             *ngIf="operations.length > 0 || errors.length > 0"
              [ngSwitch]="progress > 0 && progress < 100"
              class="operations">
       <h2>Operations</h2>
@@ -62,7 +77,8 @@
           <li *ngFor="let error of errors">{{error}}</li>
         </ul>
         <table fxFlex="0 1 auto"
-               class="operations">
+               class="operations"
+               *ngIf="operations.length > 0">
           <thead>
           <tr>
             <td>Date</td>
@@ -72,7 +88,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let operation of operations">
-            <td>{{operation.date}}</td>
+            <td>{{operation.date.format('YYYY/MM/DD')}}</td>
             <td>{{operation.amount | number:'1.2-2'}}</td>
             <td>
               <pre>{{operation.description}}</pre>

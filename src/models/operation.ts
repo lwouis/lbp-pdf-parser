@@ -1,5 +1,7 @@
+import {Moment} from 'moment/moment'
+
 export interface Operation {
-  date: string
-  description: string
+  date: Moment
   amount: number
+  description: string
 }
