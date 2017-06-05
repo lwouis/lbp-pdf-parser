@@ -7,7 +7,13 @@ export class CollectionHelper {
       const page = await pdfDocument.getPage(i)
       const content = await page.getTextContent()
       const items = content.items
-      accumulator = items.reduce(fn, accumulator)
+      accumulator = items
+        .map(item => {
+          // y values reset with every page; force them to be sequential
+          item.transform[5] += (pdfDocument.numPages - i) * 1000
+          return item
+        })
+        .reduce(fn, accumulator)
     }
     return accumulator
   }

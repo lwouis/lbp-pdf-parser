@@ -41,8 +41,22 @@
   </section>
 
   <div fxFlex="0 0 auto"
-       [hidden]="operations.length === 0"
-       #chart>
+       [hidden]="operations.length === 0">
+    <div #chart></div>
+    <div style="text-align: center">
+      Hide amounts ≤
+      <input type="number"
+             (change)="filterAmountChange($event)"
+             value="1"
+             pattern="[0-9]+(\.[0-9]+)?,"
+             step="0.01"
+             #filterAmount/>
+      Hide operations containing
+      <input type="text"
+             (change)="filterTextChange($event)"
+             value=""
+             #filterText/>
+    </div>
   </div>
 
   <div fxFlex="0 1 auto"
