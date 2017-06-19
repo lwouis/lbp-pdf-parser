@@ -1,13 +1,15 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {PdfParser} from '../../models/pdf-parser'
 import {CsvWriter} from '../../models/csv-writer'
-import * as Highcharts from 'highcharts/highcharts.src'
 import {OperationsAndErrors} from '../../models/operations-and-errors'
 import {CsvParser} from '../../models/csv-parser'
 import {Operation} from '../../models/operation'
 import * as moment from 'moment'
 import {Point} from '../../models/point'
 import {Options} from 'highcharts'
+import * as Highcharts from 'highcharts/highcharts.src'
+import * as HighchartsBoost from 'highcharts/modules/boost.src'
+HighchartsBoost(Highcharts)
 
 @Component({
   selector: 'app-pdf-upload',
@@ -113,7 +115,7 @@ export class PdfUploadComponent implements OnInit, OnDestroy {
             '<b>' + this.points[0].point.amount.toFixed(0) + ' €</b><br/>' +
             this.points[0].point.description + '<br/>' +
             '-<br/>'
-          this.points.forEach(function (point) {
+          this.points.forEach(point => {
             tooltip += '<br/>' + point.series.name + ': <span style="color:' + point.color + '">' + point.point.y.toFixed(0) + ' €</span>'
           })
           return tooltip
@@ -125,6 +127,7 @@ export class PdfUploadComponent implements OnInit, OnDestroy {
         },
         series: {
           turboThreshold: 0,
+          boostThreshold: 1,
         },
       },
       series: [
