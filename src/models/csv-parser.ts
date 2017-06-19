@@ -15,8 +15,6 @@ export class CsvParser {
   private static async operationsFromFile(file: File): Promise<Operation[]> {
     const fileContents = await PromiseHelper.fileReaderAsTextP(file)
     const operations = fileContents
-      .replace(CsvWriter.columnDelimiter + '\n', CsvWriter.columnDelimiter + CsvWriter.columnDelimiter + '\n')
-      // to avoid split removing the double-quotes
       .split(CsvWriter.columnDelimiter + '\n')
       .filter(line => line.length > 0)
       .reduce((ops, line) => {
@@ -24,7 +22,7 @@ export class CsvParser {
         ops.push({
           date: moment(values[0], 'YYYY/MM/DD'),
           amount: NumberHelper.parseNumber(values[1], ','),
-          description: values[2],
+          description: values[2].substring(1),
         })
         return ops
       }, [])
